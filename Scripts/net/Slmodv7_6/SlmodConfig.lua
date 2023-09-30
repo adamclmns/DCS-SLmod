@@ -536,48 +536,53 @@ do
 		slmod.chatLogFile = io.open(config_dir .. [[Chat Logs\]] .. os.date('%b %d, %Y at %H %M %S.txt'), 'w')
 	end	
 	----------------------------------------------------------------------------------------------------
-	----------------------------------------------------------------------------------------------------
-	-- added 058- install MissionScripting.lua
-	local curMSf, err = io.open('./Scripts/MissionScripting.lua', 'r')
-	if curMSf then
-		local slmodMSf, err = io.open(lfs.writedir() .. 'Scripts/net/Slmodv' .. slmod.version .. '/SlmodMissionScripting.lua', 'r')
-		if slmodMSf then
-			
-			local curMS = curMSf:read('*all')
-			local slmodMS = slmodMSf:read('*all')
-			curMSf:close()
-			slmodMSf:close()
-			
-			local curMSfunc, err = loadstring(curMS)
-			if curMSfunc then
-				local slmodMSfunc, err = loadstring(slmodMS)
-				if slmodMSfunc then
-					if string.dump(curMSfunc) ~= string.dump(slmodMSfunc) and curMS ~= slmodMS then  -- attempt installation... the first condition should be enough of a test, but I'm afraid it might be system dependent.
-						slmod.warning('./Scripts/MissionScripting.lua is not up to date.  Installing new ./Scripts/MissionScripting.lua.')
-						local newMSf, err = io.open('./Scripts/MissionScripting.lua', 'w')
-						if newMSf then
-							newMSf:write(slmodMS)
-							newMSf:close()
-						else
-							slmod.error('Unable to open ./Scripts/MissionScripting.lua for writing, reason: ' .. tostring(err))
-						end
-					
-					else  -- no installation is required
-						slmod.info('./Scripts/MissionScripting.lua is up to date, no installation required.')
-						return true
-					end		
-				else
-					slmod.error('Unable to compile ' .. lfs.writedir() .. 'Scripts/net/Slmodv' .. slmod.version .. '/SlmodMissionScripting.lua, reason: ' .. tostring(err))
-				end
-			else	
-				slmod.error('Unable to compile ./Scripts/MissionScripting.lua, reason: ' .. tostring(err))
-			end	
-		else
-			slmod.error('Unable to open ' .. lfs.writedir() .. 'Scripts/net/Slmodv' .. slmod.version .. '/SlmodMissionScripting.lua for reading, reason: ' .. tostring(err))
-		end
-	else
-		slmod.error('Unable to open ./Scripts/MissionScripting.lua for reading, reason: ' .. tostring(err))
-	end
+    ----------------------------------------------------------------------------------------------------
+    -- added 058- install MissionScripting.lua
+    local fox3cfg,err = io.open(lfs.writedir().."/Config/serversettings.fox3cfg",'r')
+    if fox3cfg then
+        slmod.info("SLMod MissionScripting.lua overwrite disabled, deferring to Fox3 Configurations")
+    else 
+        local curMSf, err = io.open('./Scripts/MissionScripting.lua', 'r')
+        if curMSf then
+            local slmodMSf, err = io.open(lfs.writedir() .. 'Scripts/net/Slmodv' .. slmod.version .. '/SlmodMissionScripting.lua', 'r')
+            if slmodMSf then
+                
+                local curMS = curMSf:read('*all')
+                local slmodMS = slmodMSf:read('*all')
+                curMSf:close()
+                slmodMSf:close()
+                
+                local curMSfunc, err = loadstring(curMS)
+                if curMSfunc then
+                    local slmodMSfunc, err = loadstring(slmodMS)
+                    if slmodMSfunc then
+                        if string.dump(curMSfunc) ~= string.dump(slmodMSfunc) and curMS ~= slmodMS then  -- attempt installation... the first condition should be enough of a test, but I'm afraid it might be system dependent.
+                            slmod.warning('./Scripts/MissionScripting.lua is not up to date.  Installing new ./Scripts/MissionScripting.lua.')
+                            local newMSf, err = io.open('./Scripts/MissionScripting.lua', 'w')
+                            if newMSf then
+                                newMSf:write(slmodMS)
+                                newMSf:close()
+                            else
+                                slmod.error('Unable to open ./Scripts/MissionScripting.lua for writing, reason: ' .. tostring(err))
+                            end
+                        
+                        else  -- no installation is required
+                            slmod.info('./Scripts/MissionScripting.lua is up to date, no installation required.')
+                            return true
+                        end		
+                    else
+                        slmod.error('Unable to compile ' .. lfs.writedir() .. 'Scripts/net/Slmodv' .. slmod.version .. '/SlmodMissionScripting.lua, reason: ' .. tostring(err))
+                    end
+                else	
+                    slmod.error('Unable to compile ./Scripts/MissionScripting.lua, reason: ' .. tostring(err))
+                end	
+            else
+                slmod.error('Unable to open ' .. lfs.writedir() .. 'Scripts/net/Slmodv' .. slmod.version .. '/SlmodMissionScripting.lua for reading, reason: ' .. tostring(err))
+            end
+        else
+            slmod.error('Unable to open ./Scripts/MissionScripting.lua for reading, reason: ' .. tostring(err))
+        end
+    end
 	---------------------------------------------------------------------------------------------------------------------------------------
 end
 
